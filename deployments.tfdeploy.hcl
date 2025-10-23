@@ -119,3 +119,53 @@ deployment "prd" {
   
   deployment_group = deployment_group.core_production
 }
+
+# -----------------------------------------------------------------------------
+# 출력값 발행 - 다른 스택에서 참조 가능하도록 설정
+# -----------------------------------------------------------------------------
+publish_output "vpc_outputs" {
+  description = "VPC and networking outputs for dev environment"
+  type = object({
+    vpc_id                   = string
+    public_subnet_ids        = list(string)
+    private_subnet_ids       = list(string)
+    web_security_group_id    = string
+    db_security_group_id     = string
+    ec2_instance_profile_arn = string
+  })
+}
+
+publish_output "stg_vpc_outputs" {
+  description = "VPC and networking outputs for stg environment"
+  type = object({
+    vpc_id                   = string
+    public_subnet_ids        = list(string)
+    private_subnet_ids       = list(string)
+    web_security_group_id    = string
+    db_security_group_id     = string
+    ec2_instance_profile_arn = string
+  })
+}
+
+publish_output "prd_vpc_outputs" {
+  description = "VPC and networking outputs for prd environment"
+  type = object({
+    vpc_id                   = string
+    public_subnet_ids        = list(string)
+    private_subnet_ids       = list(string)
+    web_security_group_id    = string
+    db_security_group_id     = string
+    ec2_instance_profile_arn = string
+  })
+}
+
+publish_output "yaml_config_test" {
+  description = "YAML 파일 decode 테스트 결과"
+  type = object({
+    yaml_loaded = bool
+    current_environment = string
+    vpc_cidr_from_yaml = string
+    availability_zones_from_yaml = list(string)
+    enable_nat_gateway_from_yaml = bool
+  })
+}
