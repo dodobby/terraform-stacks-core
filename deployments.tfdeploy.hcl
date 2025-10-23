@@ -62,7 +62,7 @@ deployment "dev" {
     # AWS 자격증명 (Variable Sets에서 가져오기 - store.varset 사용)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = store.varset.aws_credentials.AWS_DEFAULT_REGION
+    aws_region           = store.varset.aws_credentials.AWS_REGION
     
     # 공통 설정 (하드코딩된 값 - ephemeral 아님)
     project_name  = "terraform-stacks-demo"
@@ -89,7 +89,7 @@ deployment "stg" {
     # AWS 자격증명 (Variable Sets에서 가져오기 - store.varset 사용)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = store.varset.aws_credentials.AWS_DEFAULT_REGION
+    aws_region           = store.varset.aws_credentials.AWS_REGION
     
     # 공통 설정 (하드코딩된 값 - ephemeral 아님)
     project_name  = "terraform-stacks-demo"
@@ -116,7 +116,7 @@ deployment "prd" {
     # AWS 자격증명 (Variable Sets에서 가져오기 - store.varset 사용)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = store.varset.aws_credentials.AWS_DEFAULT_REGION
+    aws_region           = store.varset.aws_credentials.AWS_REGION
     
     # 공통 설정 (하드코딩된 값 - ephemeral 아님)
     project_name  = "terraform-stacks-demo"
