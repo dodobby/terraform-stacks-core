@@ -125,6 +125,10 @@ locals {
   final_availability_zones = try(local.current_config.availability_zones, var.availability_zones)
   final_enable_nat_gateway = try(local.current_config.enable_nat_gateway, true)
   
+  # Convert ephemeral variables to non-ephemeral
+  final_name_prefix = var.name_prefix
+  final_aws_region = var.aws_region
+  
   # 공통 태그
   common_tags = {
     Environment = var.environment
@@ -151,8 +155,8 @@ component "infrastructure" {
     environment         = var.environment
     vpc_cidr           = local.final_vpc_cidr
     availability_zones = local.final_availability_zones
-    name_prefix        = var.name_prefix
-    aws_region         = var.aws_region
+    name_prefix        = local.final_name_prefix
+    aws_region         = local.final_aws_region
     enable_nat_gateway = local.final_enable_nat_gateway
     common_tags        = local.common_tags
   }
