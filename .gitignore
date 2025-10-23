@@ -4,7 +4,7 @@
 *.tfvars
 *.tfvars.json
 .terraform/
-.terraform.lock.hcl
+# .terraform.lock.hcl  # 이 파일은 Git에 포함해야 함
 
 # Terraform Stacks specific
 *.tfplan
