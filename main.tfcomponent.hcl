@@ -18,42 +18,22 @@ required_providers {
 variable "environment" {
   type        = string
   description = "Environment name (dev, stg, prd)"
-  
-  validation {
-    condition     = contains(["dev", "stg", "prd"], var.environment)
-    error_message = "Environment must be one of: dev, stg, prd."
-  }
 }
 
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR block"
-  
-  validation {
-    condition     = can(cidrhost(var.vpc_cidr, 0))
-    error_message = "VPC CIDR must be a valid IPv4 CIDR block."
-  }
 }
 
 variable "availability_zones" {
   type        = list(string)
   description = "List of availability zones"
-  
-  validation {
-    condition     = length(var.availability_zones) >= 1 && length(var.availability_zones) <= 3
-    error_message = "Must specify between 1 and 3 availability zones."
-  }
 }
 
 variable "name_prefix" {
   type        = string
   description = "Prefix for resource names"
   default     = "hjdo"
-  
-  validation {
-    condition     = length(var.name_prefix) > 0 && length(var.name_prefix) <= 10
-    error_message = "Name prefix must be between 1 and 10 characters."
-  }
 }
 
 variable "aws_region" {
@@ -154,54 +134,72 @@ component "infrastructure" {
 # 출력 값 정의
 # -----------------------------------------------------------------------------
 output "vpc_id" {
-  value       = component.infrastructure.vpc_id
   description = "VPC ID"
+  type        = string
+  value       = component.infrastructure.vpc_id
 }
 
 output "vpc_cidr_block" {
-  value       = component.infrastructure.vpc_cidr_block
   description = "VPC CIDR block"
+  type        = string
+  value       = component.infrastructure.vpc_cidr_block
 }
 
 output "public_subnet_ids" {
-  value       = component.infrastructure.public_subnet_ids
   description = "Public subnet IDs"
+  type        = list(string)
+  value       = component.infrastructure.public_subnet_ids
 }
 
 output "private_subnet_ids" {
-  value       = component.infrastructure.private_subnet_ids
   description = "Private subnet IDs"
+  type        = list(string)
+  value       = component.infrastructure.private_subnet_ids
 }
 
 output "web_security_group_id" {
-  value       = component.infrastructure.web_security_group_id
   description = "Web security group ID"
+  type        = string
+  value       = component.infrastructure.web_security_group_id
 }
 
 output "db_security_group_id" {
-  value       = component.infrastructure.db_security_group_id
   description = "Database security group ID"
+  type        = string
+  value       = component.infrastructure.db_security_group_id
 }
 
 output "app_security_group_id" {
-  value       = component.infrastructure.app_security_group_id
   description = "Application security group ID"
+  type        = string
+  value       = component.infrastructure.app_security_group_id
 }
 
 output "ec2_instance_profile_arn" {
-  value       = component.infrastructure.ec2_instance_profile_arn
   description = "EC2 instance profile ARN"
+  type        = string
+  value       = component.infrastructure.ec2_instance_profile_arn
 }
 
 output "ec2_role_arn" {
-  value       = component.infrastructure.ec2_role_arn
   description = "EC2 IAM role ARN"
+  type        = string
+  value       = component.infrastructure.ec2_role_arn
 }
 
 # -----------------------------------------------------------------------------
 # 테스트 결과 출력
 # -----------------------------------------------------------------------------
 output "test_results" {
+  description = "테스트 결과: locals 블록과 yamldecode 함수 지원 여부"
+  type = object({
+    locals_block_supported = bool
+    yaml_file_loaded = bool
+    vpc_cidr_source = string
+    final_vpc_cidr = string
+    final_availability_zones = list(string)
+    final_enable_nat_gateway = bool
+  })
   value = {
     locals_block_supported = local.locals_block_success
     yaml_file_loaded = local.yaml_load_success
@@ -210,5 +208,4 @@ output "test_results" {
     final_availability_zones = local.final_availability_zones
     final_enable_nat_gateway = local.final_enable_nat_gateway
   }
-  description = "테스트 결과: locals 블록과 yamldecode 함수 지원 여부"
 }
