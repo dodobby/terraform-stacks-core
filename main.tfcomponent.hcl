@@ -126,7 +126,7 @@ component "infrastructure" {
     environment        = var.environment
     name_prefix        = var.name_prefix
     vpc_cidr           = local.vpc_cidr
-    availability_zones = ["ap-northeast-2a", "ap-northeast-2c"]
+    availability_zones = ["ap-northeast-2a", "ap-northeast-2b"]  # 2c 대신 2b 사용
     enable_nat_gateway = true
     common_tags        = local.common_tags
   }

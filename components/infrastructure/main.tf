@@ -26,7 +26,7 @@ locals {
 # Private Module Registry VPC 모듈 사용
 module "vpc-for-test" {
   source  = "app.terraform.io/rum-org-korean-air/vpc-for-test/aws"
-  version = "1.0.1"
+  version = "1.0.3"
 
   name_prefix        = local.name_prefix
   environment        = local.environment

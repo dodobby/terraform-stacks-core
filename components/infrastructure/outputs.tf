@@ -78,3 +78,23 @@ output "enable_nat_gateway_from_yaml" {
   description = "YAML에서 읽은 NAT Gateway 설정"
   value       = local.enable_nat_gateway
 }
+
+# 디버깅용 - 서브넷 AZ 정보
+output "public_subnet_azs" {
+  description = "Public 서브넷들의 가용 영역"
+  value       = module.vpc-for-test.public_subnet_azs
+}
+
+output "private_subnet_azs" {
+  description = "Private 서브넷들의 가용 영역"  
+  value       = module.vpc-for-test.private_subnet_azs
+}
+
+output "subnet_count_debug" {
+  description = "서브넷 개수 디버깅 정보"
+  value = {
+    public_count  = length(module.vpc-for-test.public_subnet_ids)
+    private_count = length(module.vpc-for-test.private_subnet_ids)
+    requested_azs = local.availability_zones
+  }
+}
