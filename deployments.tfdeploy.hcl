@@ -6,17 +6,17 @@
 # Variable Sets 참조 - AWS 인증은 Variable Sets를 통해 관리
 # -----------------------------------------------------------------------------
 store "varset" "aws_credentials" {
-  id       = "varset-aws-credentials-id"  # 실제 Variable Set ID로 교체 필요
+  id       = "varset-VqTt9ubP3LPSFKeS"
   category = "terraform"
 }
 
 store "varset" "common_tags" {
-  id       = "varset-common-tags-id"  # 실제 Variable Set ID로 교체 필요
+  id       = "varset-vMFB9eJBNwQpDhBo"
   category = "terraform"
 }
 
 store "varset" "network_config" {
-  id       = "varset-network-config-id"  # 실제 Variable Set ID로 교체 필요
+  id       = "varset-eLGwZg8NBefZorr9"
   category = "terraform"
 }
 
