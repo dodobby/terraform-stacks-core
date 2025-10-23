@@ -25,14 +25,14 @@ store "varset" "network_config" {
 # -----------------------------------------------------------------------------
 deployment_auto_approve "dev_auto_approve" {
   check {
-    condition = context.plan.deployment == deployment.dev
+    condition = context.plan != null && context.plan.deployment != null && context.plan.deployment == deployment.dev
     reason    = "Automatically applying dev deployment for small changes."
   }
 }
 
 deployment_auto_approve "small_changes" {
   check {
-    condition = context.plan.changes.total <= 10
+    condition = context.plan != null && context.plan.changes != null && context.plan.changes.total <= 10
     reason    = "Auto-approve changes with 10 or fewer resources."
   }
 }

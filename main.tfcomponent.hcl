@@ -34,48 +34,57 @@ provider "aws" "default" {
 variable "environment" {
   type        = string
   description = "Environment name (dev, stg, prd)"
+  ephemeral   = true
 }
 
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR block"
+  ephemeral   = true
 }
 
 variable "availability_zones" {
   type        = list(string)
   description = "List of availability zones"
+  ephemeral   = true
 }
 
 variable "name_prefix" {
   type        = string
   description = "Prefix for resource names"
   default     = "hjdo"
+  ephemeral   = true
 }
 
 variable "aws_region" {
   type        = string
   description = "AWS region"
   default     = "ap-northeast-2"
+  ephemeral   = true
 }
 
 variable "project_name" {
   type        = string
   description = "Project name"
+  ephemeral   = true
 }
 
 variable "owner" {
   type        = string
   description = "Owner of the resources"
+  ephemeral   = true
 }
 
 variable "createdBy" {
   type        = string
   description = "Creator of the resources"
+  ephemeral   = true
 }
 
 variable "cost_center" {
   type        = string
   description = "Cost center"
+  ephemeral   = true
 }
 
 # -----------------------------------------------------------------------------
