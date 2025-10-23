@@ -10,9 +10,20 @@ store "varset" "aws_credentials" {
   category = "env"
 }
 
-store "varset" "common_tags" {
-  id       = "varset-vMFB9eJBNwQpDhBo"  # TFC에서 생성된 실제 ID로 변경 필요
-  category = "terraform"
+# -----------------------------------------------------------------------------
+# 공통 설정 - 중앙 관리
+# -----------------------------------------------------------------------------
+locals {
+  # 프로젝트 공통 설정
+  common_config = {
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -56,69 +67,42 @@ deployment_group "core_production" {
 
 # 개발 환경 배포
 deployment "dev" {
-  inputs = {
-    # 환경 구분
+  inputs = merge(local.common_config, {
+    # 환경별 설정
     environment = "dev"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    
-    # 공통 설정 (Variable Sets에서 가져오기)
-    aws_region    = "ap-northeast-2"
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
-  }
+  })
   
   deployment_group = deployment_group.core_development
 }
 
 # 스테이징 환경 배포
 deployment "stg" {
-  inputs = {
-    # 환경 구분
+  inputs = merge(local.common_config, {
+    # 환경별 설정
     environment = "stg"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    
-    # 공통 설정 (Variable Sets에서 가져오기)
-    aws_region    = "ap-northeast-2"
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
-  }
+  })
   
   deployment_group = deployment_group.core_staging
 }
 
 # 프로덕션 환경 배포
 deployment "prd" {
-  inputs = {
-    # 환경 구분
+  inputs = merge(local.common_config, {
+    # 환경별 설정
     environment = "prd"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    
-    # 공통 설정 (Variable Sets에서 가져오기)
-    aws_region    = "ap-northeast-2"
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
-  }
+  })
   
   deployment_group = deployment_group.core_production
 }
