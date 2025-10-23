@@ -1,19 +1,51 @@
-# 네트워크 관련 설정만 YAML로 관리
+# 네트워크 관련 설정 - YAML decode로 동적 리소스 생성
 dev:
-  vpc_cidr: "10.0.0.0/16"
+  vpc_cidr: "70.0.0.0/16"
   availability_zones:
     - "ap-northeast-2a"
+    - "ap-northeast-2c"
   enable_nat_gateway: false  # 개발 환경에서는 비용 절약
+  public_subnets:
+    - cidr: "70.0.1.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.0.2.0/24"
+      az: "ap-northeast-2c"
+  private_subnets:
+    - cidr: "70.0.10.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.0.11.0/24"
+      az: "ap-northeast-2c"
+
 stg:
-  vpc_cidr: "10.1.0.0/16"
+  vpc_cidr: "70.1.0.0/16"
   availability_zones:
     - "ap-northeast-2a"
-    - "ap-northeast-2b"
-  enable_nat_gateway: true
-prd:
-  vpc_cidr: "10.2.0.0/16"
-  availability_zones:
-    - "ap-northeast-2a"
-    - "ap-northeast-2b"
     - "ap-northeast-2c"
   enable_nat_gateway: true
+  public_subnets:
+    - cidr: "70.1.1.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.1.2.0/24"
+      az: "ap-northeast-2c"
+  private_subnets:
+    - cidr: "70.1.10.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.1.11.0/24"
+      az: "ap-northeast-2c"
+
+prd:
+  vpc_cidr: "70.2.0.0/16"
+  availability_zones:
+    - "ap-northeast-2a"
+    - "ap-northeast-2c"
+  enable_nat_gateway: true
+  public_subnets:
+    - cidr: "70.2.1.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.2.2.0/24"
+      az: "ap-northeast-2c"
+  private_subnets:
+    - cidr: "70.2.10.0/24"
+      az: "ap-northeast-2a"
+    - cidr: "70.2.11.0/24"
+      az: "ap-northeast-2c"

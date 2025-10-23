@@ -55,3 +55,26 @@ output "ec2_role_arn" {
   description = "EC2 IAM role ARN"
   value       = module.iam.ec2_role_arn
 }
+
+# -----------------------------------------------------------------------------
+# YAML Decode 테스트 결과 출력
+# -----------------------------------------------------------------------------
+output "yaml_loaded" {
+  description = "YAML 파일이 성공적으로 로드되었는지 여부"
+  value       = can(yamldecode(file("${path.module}/../../config/network-config.yaml")))
+}
+
+output "vpc_cidr_from_yaml" {
+  description = "YAML에서 읽은 VPC CIDR"
+  value       = local.vpc_cidr
+}
+
+output "availability_zones_from_yaml" {
+  description = "YAML에서 읽은 가용 영역"
+  value       = local.availability_zones
+}
+
+output "enable_nat_gateway_from_yaml" {
+  description = "YAML에서 읽은 NAT Gateway 설정"
+  value       = local.enable_nat_gateway
+}

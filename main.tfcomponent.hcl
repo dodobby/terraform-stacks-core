@@ -97,15 +97,8 @@ variable "managed_by" {
 # 로컬 값 정의
 # -----------------------------------------------------------------------------
 locals {
-  # 가용 영역 자동 감지 (최소 2개)
-  availability_zones = slice(data.aws_availability_zones.available.names, 0, 2)
-  
-  # VPC CIDR 블록
-  vpc_cidr = "10.0.0.0/16"
-  
-  # 서브넷 CIDR 블록 계산
-  public_subnet_cidrs  = [for i in range(length(local.availability_zones)) : "10.0.${i + 1}.0/24"]
-  private_subnet_cidrs = [for i in range(length(local.availability_zones)) : "10.0.${i + 10}.0/24"]
+  # VPC CIDR 블록 (기존 70.x.x.x 대역 사용)
+  vpc_cidr = "70.0.0.0/16"
   
   # 공통 태그
   common_tags = {
@@ -120,30 +113,22 @@ locals {
 }
 
 # -----------------------------------------------------------------------------
-# 데이터 소스
-# -----------------------------------------------------------------------------
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-# -----------------------------------------------------------------------------
 # 컴포넌트 정의
 # -----------------------------------------------------------------------------
-component "vpc" {
-  source = "./components/vpc"
+component "infrastructure" {
+  source = "./components/infrastructure"
   
   providers = {
     aws = provider.aws.default
   }
   
   inputs = {
-    environment          = var.environment
-    name_prefix         = var.name_prefix
-    vpc_cidr            = local.vpc_cidr
-    availability_zones  = local.availability_zones
-    public_subnet_cidrs = local.public_subnet_cidrs
-    private_subnet_cidrs = local.private_subnet_cidrs
-    common_tags         = local.common_tags
+    environment        = var.environment
+    name_prefix        = var.name_prefix
+    vpc_cidr           = local.vpc_cidr
+    availability_zones = ["ap-northeast-2a", "ap-northeast-2c"]
+    enable_nat_gateway = true
+    common_tags        = local.common_tags
   }
 }
 
@@ -161,12 +146,12 @@ output "vpc_outputs" {
     ec2_instance_profile_arn = string
   })
   value = {
-    vpc_id                   = component.vpc.vpc_id
-    public_subnet_ids        = component.vpc.public_subnet_ids
-    private_subnet_ids       = component.vpc.private_subnet_ids
-    web_security_group_id    = component.vpc.web_security_group_id
-    db_security_group_id     = component.vpc.db_security_group_id
-    ec2_instance_profile_arn = component.vpc.ec2_instance_profile_arn
+    vpc_id                   = component.infrastructure.vpc_id
+    public_subnet_ids        = component.infrastructure.public_subnet_ids
+    private_subnet_ids       = component.infrastructure.private_subnet_ids
+    web_security_group_id    = component.infrastructure.web_security_group_id
+    db_security_group_id     = component.infrastructure.db_security_group_id
+    ec2_instance_profile_arn = component.infrastructure.ec2_instance_profile_arn
   }
 }
 
@@ -181,12 +166,12 @@ output "stg_vpc_outputs" {
     ec2_instance_profile_arn = string
   })
   value = {
-    vpc_id                   = component.vpc.vpc_id
-    public_subnet_ids        = component.vpc.public_subnet_ids
-    private_subnet_ids       = component.vpc.private_subnet_ids
-    web_security_group_id    = component.vpc.web_security_group_id
-    db_security_group_id     = component.vpc.db_security_group_id
-    ec2_instance_profile_arn = component.vpc.ec2_instance_profile_arn
+    vpc_id                   = component.infrastructure.vpc_id
+    public_subnet_ids        = component.infrastructure.public_subnet_ids
+    private_subnet_ids       = component.infrastructure.private_subnet_ids
+    web_security_group_id    = component.infrastructure.web_security_group_id
+    db_security_group_id     = component.infrastructure.db_security_group_id
+    ec2_instance_profile_arn = component.infrastructure.ec2_instance_profile_arn
   }
 }
 
@@ -201,11 +186,32 @@ output "prd_vpc_outputs" {
     ec2_instance_profile_arn = string
   })
   value = {
-    vpc_id                   = component.vpc.vpc_id
-    public_subnet_ids        = component.vpc.public_subnet_ids
-    private_subnet_ids       = component.vpc.private_subnet_ids
-    web_security_group_id    = component.vpc.web_security_group_id
-    db_security_group_id     = component.vpc.db_security_group_id
-    ec2_instance_profile_arn = component.vpc.ec2_instance_profile_arn
+    vpc_id                   = component.infrastructure.vpc_id
+    public_subnet_ids        = component.infrastructure.public_subnet_ids
+    private_subnet_ids       = component.infrastructure.private_subnet_ids
+    web_security_group_id    = component.infrastructure.web_security_group_id
+    db_security_group_id     = component.infrastructure.db_security_group_id
+    ec2_instance_profile_arn = component.infrastructure.ec2_instance_profile_arn
+  }
+}
+
+# -----------------------------------------------------------------------------
+# YAML Decode 테스트 결과 출력
+# -----------------------------------------------------------------------------
+output "yaml_config_test" {
+  description = "YAML 파일 decode 테스트 결과"
+  type = object({
+    yaml_loaded = bool
+    current_environment = string
+    vpc_cidr_from_yaml = string
+    availability_zones_from_yaml = list(string)
+    enable_nat_gateway_from_yaml = bool
+  })
+  value = {
+    yaml_loaded = component.infrastructure.yaml_loaded
+    current_environment = var.environment
+    vpc_cidr_from_yaml = component.infrastructure.vpc_cidr_from_yaml
+    availability_zones_from_yaml = component.infrastructure.availability_zones_from_yaml
+    enable_nat_gateway_from_yaml = component.infrastructure.enable_nat_gateway_from_yaml
   }
 }

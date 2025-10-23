@@ -1,10 +1,25 @@
-# Convert ephemeral values to non-ephemeral using locals
+# YAML 파일에서 네트워크 설정 읽기
 locals {
+  # YAML 파일 decode
+  network_config = try(yamldecode(file("${path.module}/../../config/network-config.yaml")), {})
+  
+  # 현재 환경의 설정 추출
+  current_config = try(local.network_config[var.environment], {
+    vpc_cidr = var.vpc_cidr
+    availability_zones = var.availability_zones
+    enable_nat_gateway = var.enable_nat_gateway
+    public_subnets = []
+    private_subnets = []
+  })
+  
+  # 최종 사용할 값들 (YAML 우선, 실패 시 변수 사용)
   name_prefix        = var.name_prefix
   environment        = var.environment
-  vpc_cidr          = var.vpc_cidr
-  availability_zones = var.availability_zones
-  enable_nat_gateway = var.enable_nat_gateway
+  vpc_cidr          = try(local.current_config.vpc_cidr, var.vpc_cidr)
+  availability_zones = try(local.current_config.availability_zones, var.availability_zones)
+  enable_nat_gateway = try(local.current_config.enable_nat_gateway, var.enable_nat_gateway)
+  public_subnets     = try(local.current_config.public_subnets, [])
+  private_subnets    = try(local.current_config.private_subnets, [])
   common_tags       = var.common_tags
 }
 

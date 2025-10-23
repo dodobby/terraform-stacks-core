@@ -10,6 +10,11 @@ store "varset" "aws_credentials" {
   category = "env"
 }
 
+store "varset" "common_tags" {
+  id       = "varset-vMFB9eJBNwQpDhBo"  # TFC에서 생성된 실제 ID로 변경 필요
+  category = "terraform"
+}
+
 # -----------------------------------------------------------------------------
 # 자동 승인 정책 정의
 # -----------------------------------------------------------------------------
@@ -59,14 +64,14 @@ deployment "dev" {
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
     
-    # 공통 설정
+    # 공통 설정 (Variable Sets에서 가져오기)
     aws_region    = "ap-northeast-2"
-    project_name  = "terraform-stacks-demo"
-    owner         = "devops-team"
-    createdBy     = "hj.do"
-    cost_center   = "engineering"
-    managed_by    = "terraform-stacks"
-    name_prefix   = "hjdo"
+    project_name  = store.varset.common_tags.project_name
+    owner         = store.varset.common_tags.owner
+    createdBy     = store.varset.common_tags.createdBy
+    cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
+    name_prefix   = store.varset.common_tags.name_prefix
   }
   
   deployment_group = deployment_group.core_development
@@ -82,14 +87,14 @@ deployment "stg" {
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
     
-    # 공통 설정
+    # 공통 설정 (Variable Sets에서 가져오기)
     aws_region    = "ap-northeast-2"
-    project_name  = "terraform-stacks-demo"
-    owner         = "devops-team"
-    createdBy     = "hj.do"
-    cost_center   = "engineering"
-    managed_by    = "terraform-stacks"
-    name_prefix   = "hjdo"
+    project_name  = store.varset.common_tags.project_name
+    owner         = store.varset.common_tags.owner
+    createdBy     = store.varset.common_tags.createdBy
+    cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
+    name_prefix   = store.varset.common_tags.name_prefix
   }
   
   deployment_group = deployment_group.core_staging
@@ -105,14 +110,14 @@ deployment "prd" {
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
     
-    # 공통 설정
+    # 공통 설정 (Variable Sets에서 가져오기)
     aws_region    = "ap-northeast-2"
-    project_name  = "terraform-stacks-demo"
-    owner         = "devops-team"
-    createdBy     = "hj.do"
-    cost_center   = "engineering"
-    managed_by    = "terraform-stacks"
-    name_prefix   = "hjdo"
+    project_name  = store.varset.common_tags.project_name
+    owner         = store.varset.common_tags.owner
+    createdBy     = store.varset.common_tags.createdBy
+    cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
+    name_prefix   = store.varset.common_tags.name_prefix
   }
   
   deployment_group = deployment_group.core_production
