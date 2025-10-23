@@ -67,7 +67,7 @@ variable "cost_center" {
 # -----------------------------------------------------------------------------
 locals {
   # YAML 파일에서 설정 읽기 시도
-  network_config = try(yamldecode(file("${path.root}/config/network-config.yaml")), {
+  network_config = try(yamldecode(file("config/network-config.yaml")), {
     dev = { 
       vpc_cidr = "10.0.0.0/16", 
       availability_zones = ["ap-northeast-2a"],
@@ -93,7 +93,7 @@ locals {
   })
   
   # 테스트 결과 확인용
-  yaml_load_success = can(yamldecode(file("${path.root}/config/network-config.yaml")))
+  yaml_load_success = can(yamldecode(file("config/network-config.yaml")))
   locals_block_success = true
   
   # 실제 사용할 값들 (YAML 우선, 실패 시 변수 사용)
