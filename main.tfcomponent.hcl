@@ -43,57 +43,48 @@ variable "environment" {
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR block"
-  ephemeral   = true
 }
 
 variable "availability_zones" {
   type        = list(string)
   description = "List of availability zones"
-  ephemeral   = true
 }
 
 variable "name_prefix" {
   type        = string
   description = "Prefix for resource names"
   default     = "hjdo"
-  ephemeral   = true
 }
 
 variable "aws_region" {
   type        = string
   description = "AWS region"
   default     = "ap-northeast-2"
-  ephemeral   = true
 }
 
 variable "project_name" {
   type        = string
   description = "Project name"
-  ephemeral   = true
 }
 
 variable "owner" {
   type        = string
   description = "Owner of the resources"
-  ephemeral   = true
 }
 
 variable "createdBy" {
   type        = string
   description = "Creator of the resources"
-  ephemeral   = true
 }
 
 variable "cost_center" {
   type        = string
   description = "Cost center"
-  ephemeral   = true
 }
 
 variable "managed_by" {
   type        = string
   description = "Managed by"
-  ephemeral   = true
 }
 
 # -----------------------------------------------------------------------------
@@ -103,17 +94,17 @@ locals {
   # YAML 파일에서 설정 읽기 시도
   network_config = try(yamldecode(file("config/network-config.yaml")), {
     dev = { 
-      vpc_cidr = "10.0.0.0/16", 
+      vpc_cidr = "70.0.0.0/16", 
       availability_zones = ["ap-northeast-2a"],
       enable_nat_gateway = false
     }
     stg = { 
-      vpc_cidr = "10.1.0.0/16", 
+      vpc_cidr = "70.1.0.0/16", 
       availability_zones = ["ap-northeast-2a", "ap-northeast-2b"],
       enable_nat_gateway = true
     }
     prd = { 
-      vpc_cidr = "10.2.0.0/16", 
+      vpc_cidr = "70.2.0.0/16", 
       availability_zones = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"],
       enable_nat_gateway = true
     }
@@ -135,7 +126,7 @@ locals {
   final_availability_zones = try(local.current_config.availability_zones, var.availability_zones)
   final_enable_nat_gateway = try(local.current_config.enable_nat_gateway, true)
   
-  # Convert ephemeral variables to non-ephemeral
+  # 변수 값들을 직접 사용
   final_name_prefix = var.name_prefix
   final_aws_region = var.aws_region
   final_managed_by = var.managed_by
@@ -147,7 +138,7 @@ locals {
     Owner       = var.owner
     CreatedBy   = var.createdBy
     CostCenter  = var.cost_center
-    ManagedBy   = local.final_managed_by
+    ManagedBy   = var.managed_by
     Stack       = "core-infrastructure"
   }
 }
@@ -166,8 +157,8 @@ component "infrastructure" {
     environment         = var.environment
     vpc_cidr           = local.final_vpc_cidr
     availability_zones = local.final_availability_zones
-    name_prefix        = local.final_name_prefix
-    aws_region         = local.final_aws_region
+    name_prefix        = var.name_prefix
+    aws_region         = var.aws_region
     enable_nat_gateway = local.final_enable_nat_gateway
     common_tags        = local.common_tags
   }

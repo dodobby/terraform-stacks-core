@@ -65,9 +65,9 @@ deployment "dev" {
     # 환경 구분
     environment = "dev"
     
-    # 네트워크 설정 (Variable Sets에서 관리)
-    vpc_cidr           = store.varset.network_config.dev_vpc_cidr
-    availability_zones = store.varset.network_config.dev_availability_zones
+    # 네트워크 설정 (하드코딩된 값 사용)
+    vpc_cidr           = "70.0.0.0/16"
+    availability_zones = ["ap-northeast-2a"]
     
     # 공통 설정 (Variable Sets에서 관리)
     aws_region    = store.varset.aws_credentials.aws_region
@@ -88,9 +88,9 @@ deployment "stg" {
     # 환경 구분
     environment = "stg"
     
-    # 네트워크 설정 (Variable Sets에서 관리)
-    vpc_cidr           = store.varset.network_config.stg_vpc_cidr
-    availability_zones = store.varset.network_config.stg_availability_zones
+    # 네트워크 설정 (하드코딩된 값 사용)
+    vpc_cidr           = "70.1.0.0/16"
+    availability_zones = ["ap-northeast-2a", "ap-northeast-2b"]
     
     # 공통 설정 (Variable Sets에서 관리)
     aws_region    = store.varset.aws_credentials.aws_region
@@ -111,9 +111,9 @@ deployment "prd" {
     # 환경 구분
     environment = "prd"
     
-    # 네트워크 설정 (Variable Sets에서 관리)
-    vpc_cidr           = store.varset.network_config.prd_vpc_cidr
-    availability_zones = store.varset.network_config.prd_availability_zones
+    # 네트워크 설정 (하드코딩된 값 사용)
+    vpc_cidr           = "70.2.0.0/16"
+    availability_zones = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
     
     # 공통 설정 (Variable Sets에서 관리)
     aws_region    = store.varset.aws_credentials.aws_region
