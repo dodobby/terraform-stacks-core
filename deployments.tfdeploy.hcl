@@ -1,9 +1,9 @@
 # =============================================================================
-# 기본 스택 배포 정의 (Core Infrastructure Stack Deployments)
+# Core Infrastructure Stack Deployments
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Variable Sets 참조 - AWS 인증은 Variable Sets 사용 (환경 변수)
+# Variable Sets 참조
 # -----------------------------------------------------------------------------
 store "varset" "aws_credentials" {
   id       = "varset-VqTt9ubP3LPSFKeS"
@@ -16,32 +16,32 @@ store "varset" "aws_credentials" {
 deployment_auto_approve "dev_auto_approve" {
   check {
     condition = context.plan != null && context.plan.deployment != null && context.plan.deployment == deployment.dev
-    reason    = "Automatically applying dev deployment for small changes."
+    reason    = "Automatically applying dev deployment for core infrastructure."
   }
 }
 
 deployment_auto_approve "small_changes" {
   check {
-    condition = context.plan != null && context.plan.changes != null && context.plan.changes.total <= 10
-    reason    = "Auto-approve changes with 10 or fewer resources."
+    condition = context.plan != null && context.plan.changes != null && context.plan.changes.total <= 3
+    reason    = "Auto-approve small infrastructure changes."
   }
 }
 
 # -----------------------------------------------------------------------------
-# 배포 그룹 정의 - 환경별 배포 순서 제어
+# 배포 그룹 정의
 # -----------------------------------------------------------------------------
-deployment_group "development" {
+deployment_group "core_development" {
   auto_approve_checks = [
     deployment_auto_approve.dev_auto_approve,
     deployment_auto_approve.small_changes
   ]
 }
 
-deployment_group "staging" {
+deployment_group "core_staging" {
   auto_approve_checks = []  # 수동 승인
 }
 
-deployment_group "production" {
+deployment_group "core_production" {
   auto_approve_checks = []  # 수동 승인
 }
 
@@ -55,16 +55,12 @@ deployment "dev" {
     # 환경 구분
     environment = "dev"
     
-    # 네트워크 설정 (하드코딩된 값 사용)
-    vpc_cidr           = "70.0.0.0/16"
-    availability_zones = ["ap-northeast-2a"]
-    
-    # AWS 자격증명 (민감한 정보만 Variable Sets 사용)
+    # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = "ap-northeast-2"  # 하드코딩 (고정 값)
     
-    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
     project_name  = "terraform-stacks-demo"
     owner         = "devops-team"
     createdBy     = "hj.do"
@@ -73,7 +69,7 @@ deployment "dev" {
     name_prefix   = "hjdo"
   }
   
-  deployment_group = deployment_group.development
+  deployment_group = deployment_group.core_development
 }
 
 # 스테이징 환경 배포
@@ -82,16 +78,12 @@ deployment "stg" {
     # 환경 구분
     environment = "stg"
     
-    # 네트워크 설정 (하드코딩된 값 사용)
-    vpc_cidr           = "70.1.0.0/16"
-    availability_zones = ["ap-northeast-2a", "ap-northeast-2b"]
-    
-    # AWS 자격증명 (민감한 정보만 Variable Sets 사용)
+    # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = "ap-northeast-2"  # 하드코딩 (고정 값)
     
-    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
     project_name  = "terraform-stacks-demo"
     owner         = "devops-team"
     createdBy     = "hj.do"
@@ -100,7 +92,7 @@ deployment "stg" {
     name_prefix   = "hjdo"
   }
   
-  deployment_group = deployment_group.staging
+  deployment_group = deployment_group.core_staging
 }
 
 # 프로덕션 환경 배포
@@ -109,16 +101,12 @@ deployment "prd" {
     # 환경 구분
     environment = "prd"
     
-    # 네트워크 설정 (하드코딩된 값 사용)
-    vpc_cidr           = "70.2.0.0/16"
-    availability_zones = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
-    
-    # AWS 자격증명 (민감한 정보만 Variable Sets 사용)
+    # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-    aws_region           = "ap-northeast-2"  # 하드코딩 (고정 값)
     
-    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
     project_name  = "terraform-stacks-demo"
     owner         = "devops-team"
     createdBy     = "hj.do"
@@ -127,53 +115,5 @@ deployment "prd" {
     name_prefix   = "hjdo"
   }
   
-  deployment_group = deployment_group.production
-}
-
-# -----------------------------------------------------------------------------
-# 출력 값 게시 - 다른 스택에서 사용
-# -----------------------------------------------------------------------------
-publish_output "vpc_outputs" {
-  description = "VPC and network resources from core infrastructure"
-  value = {
-    vpc_id                    = deployment.dev.vpc_id
-    vpc_cidr_block           = deployment.dev.vpc_cidr_block
-    public_subnet_ids         = deployment.dev.public_subnet_ids
-    private_subnet_ids        = deployment.dev.private_subnet_ids
-    web_security_group_id     = deployment.dev.web_security_group_id
-    db_security_group_id      = deployment.dev.db_security_group_id
-    app_security_group_id     = deployment.dev.app_security_group_id
-    ec2_instance_profile_arn  = deployment.dev.ec2_instance_profile_arn
-    ec2_role_arn             = deployment.dev.ec2_role_arn
-  }
-}
-
-publish_output "stg_vpc_outputs" {
-  description = "VPC and network resources from staging environment"
-  value = {
-    vpc_id                    = deployment.stg.vpc_id
-    vpc_cidr_block           = deployment.stg.vpc_cidr_block
-    public_subnet_ids         = deployment.stg.public_subnet_ids
-    private_subnet_ids        = deployment.stg.private_subnet_ids
-    web_security_group_id     = deployment.stg.web_security_group_id
-    db_security_group_id      = deployment.stg.db_security_group_id
-    app_security_group_id     = deployment.stg.app_security_group_id
-    ec2_instance_profile_arn  = deployment.stg.ec2_instance_profile_arn
-    ec2_role_arn             = deployment.stg.ec2_role_arn
-  }
-}
-
-publish_output "prd_vpc_outputs" {
-  description = "VPC and network resources from production environment"
-  value = {
-    vpc_id                    = deployment.prd.vpc_id
-    vpc_cidr_block           = deployment.prd.vpc_cidr_block
-    public_subnet_ids         = deployment.prd.public_subnet_ids
-    private_subnet_ids        = deployment.prd.private_subnet_ids
-    web_security_group_id     = deployment.prd.web_security_group_id
-    db_security_group_id      = deployment.prd.db_security_group_id
-    app_security_group_id     = deployment.prd.app_security_group_id
-    ec2_instance_profile_arn  = deployment.prd.ec2_instance_profile_arn
-    ec2_role_arn             = deployment.prd.ec2_role_arn
-  }
+  deployment_group = deployment_group.core_production
 }
