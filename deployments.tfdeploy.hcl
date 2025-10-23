@@ -59,19 +59,22 @@ deployment_group "production" {
 # 환경별 배포 정의
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# 로컬 값 정의 - Variable Sets 값을 일반 값으로 변환
+# -----------------------------------------------------------------------------
+locals {
+  # 공통 설정 (Variable Sets에서 가져와서 일반 값으로 변환)
+  aws_region   = store.varset.aws_credentials.aws_region
+  project_name = store.varset.common_tags.project_name
+  owner        = store.varset.common_tags.owner
+  createdBy    = store.varset.common_tags.createdBy
+  cost_center  = store.varset.common_tags.cost_center
+  managed_by   = store.varset.common_tags.managed_by
+  name_prefix  = store.varset.common_tags.name_prefix
+}
+
 # 개발 환경 배포
 deployment "dev" {
-  # Variable Sets 값을 로컬 변수로 변환
-  locals {
-    aws_region   = store.varset.aws_credentials.aws_region
-    project_name = store.varset.common_tags.project_name
-    owner        = store.varset.common_tags.owner
-    createdBy    = store.varset.common_tags.createdBy
-    cost_center  = store.varset.common_tags.cost_center
-    managed_by   = store.varset.common_tags.managed_by
-    name_prefix  = store.varset.common_tags.name_prefix
-  }
-  
   inputs = {
     # 환경 구분
     environment = "dev"
@@ -95,17 +98,6 @@ deployment "dev" {
 
 # 스테이징 환경 배포
 deployment "stg" {
-  # Variable Sets 값을 로컬 변수로 변환
-  locals {
-    aws_region   = store.varset.aws_credentials.aws_region
-    project_name = store.varset.common_tags.project_name
-    owner        = store.varset.common_tags.owner
-    createdBy    = store.varset.common_tags.createdBy
-    cost_center  = store.varset.common_tags.cost_center
-    managed_by   = store.varset.common_tags.managed_by
-    name_prefix  = store.varset.common_tags.name_prefix
-  }
-  
   inputs = {
     # 환경 구분
     environment = "stg"
@@ -129,17 +121,6 @@ deployment "stg" {
 
 # 프로덕션 환경 배포
 deployment "prd" {
-  # Variable Sets 값을 로컬 변수로 변환
-  locals {
-    aws_region   = store.varset.aws_credentials.aws_region
-    project_name = store.varset.common_tags.project_name
-    owner        = store.varset.common_tags.owner
-    createdBy    = store.varset.common_tags.createdBy
-    cost_center  = store.varset.common_tags.cost_center
-    managed_by   = store.varset.common_tags.managed_by
-    name_prefix  = store.varset.common_tags.name_prefix
-  }
-  
   inputs = {
     # 환경 구분
     environment = "prd"
