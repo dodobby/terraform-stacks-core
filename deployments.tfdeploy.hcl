@@ -3,21 +3,11 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Variable Sets 참조 - AWS 인증은 Variable Sets를 통해 관리
+# Variable Sets 참조 - AWS 인증만 Variable Sets 사용 (환경 변수)
 # -----------------------------------------------------------------------------
 store "varset" "aws_credentials" {
   id       = "varset-VqTt9ubP3LPSFKeS"
-  category = "terraform"
-}
-
-store "varset" "common_tags" {
-  id       = "varset-vMFB9eJBNwQpDhBo"
-  category = "terraform"
-}
-
-store "varset" "network_config" {
-  id       = "varset-eLGwZg8NBefZorr9"
-  category = "terraform"
+  category = "env"
 }
 
 # -----------------------------------------------------------------------------
@@ -69,14 +59,14 @@ deployment "dev" {
     vpc_cidr           = "70.0.0.0/16"
     availability_zones = ["ap-northeast-2a"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
   }
   
   deployment_group = deployment_group.development
@@ -92,14 +82,14 @@ deployment "stg" {
     vpc_cidr           = "70.1.0.0/16"
     availability_zones = ["ap-northeast-2a", "ap-northeast-2b"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
   }
   
   deployment_group = deployment_group.staging
@@ -115,14 +105,14 @@ deployment "prd" {
     vpc_cidr           = "70.2.0.0/16"
     availability_zones = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (하드코딩된 값 - ephemeral 아님)
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
   }
   
   deployment_group = deployment_group.production
