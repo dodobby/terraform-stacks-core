@@ -21,7 +21,11 @@ provider "aws" "default" {
     default_tags {
       tags = {
         Environment = var.environment
-        ManagedBy   = "terraform-stacks"
+        Project     = var.project_name
+        Owner       = var.owner
+        CreatedBy   = var.createdBy
+        CostCenter  = var.cost_center
+        ManagedBy   = var.managed_by
         Stack       = "core-infrastructure"
       }
     }
@@ -39,43 +43,57 @@ variable "environment" {
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR block"
+  ephemeral   = true
 }
 
 variable "availability_zones" {
   type        = list(string)
   description = "List of availability zones"
+  ephemeral   = true
 }
 
 variable "name_prefix" {
   type        = string
   description = "Prefix for resource names"
   default     = "hjdo"
+  ephemeral   = true
 }
 
 variable "aws_region" {
   type        = string
   description = "AWS region"
   default     = "ap-northeast-2"
+  ephemeral   = true
 }
 
 variable "project_name" {
   type        = string
   description = "Project name"
+  ephemeral   = true
 }
 
 variable "owner" {
   type        = string
   description = "Owner of the resources"
+  ephemeral   = true
 }
 
 variable "createdBy" {
   type        = string
   description = "Creator of the resources"
+  ephemeral   = true
 }
 
 variable "cost_center" {
   type        = string
   description = "Cost center"
+  ephemeral   = true
+}
+
+variable "managed_by" {
+  type        = string
+  description = "Managed by"
+  ephemeral   = true
 }
 
 # -----------------------------------------------------------------------------
@@ -117,7 +135,10 @@ locals {
   final_availability_zones = try(local.current_config.availability_zones, var.availability_zones)
   final_enable_nat_gateway = try(local.current_config.enable_nat_gateway, true)
   
-
+  # Convert ephemeral variables to non-ephemeral
+  final_name_prefix = var.name_prefix
+  final_aws_region = var.aws_region
+  final_managed_by = var.managed_by
   
   # 공통 태그
   common_tags = {
@@ -126,7 +147,7 @@ locals {
     Owner       = var.owner
     CreatedBy   = var.createdBy
     CostCenter  = var.cost_center
-    ManagedBy   = "terraform-stacks"
+    ManagedBy   = local.final_managed_by
     Stack       = "core-infrastructure"
   }
 }
@@ -145,8 +166,8 @@ component "infrastructure" {
     environment         = var.environment
     vpc_cidr           = local.final_vpc_cidr
     availability_zones = local.final_availability_zones
-    name_prefix        = var.name_prefix
-    aws_region         = var.aws_region
+    name_prefix        = local.final_name_prefix
+    aws_region         = local.final_aws_region
     enable_nat_gateway = local.final_enable_nat_gateway
     common_tags        = local.common_tags
   }

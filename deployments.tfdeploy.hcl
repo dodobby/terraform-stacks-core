@@ -75,6 +75,7 @@ deployment "dev" {
     owner         = store.varset.common_tags.owner
     createdBy     = store.varset.common_tags.createdBy
     cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
     name_prefix   = store.varset.common_tags.name_prefix
   }
   
@@ -97,6 +98,7 @@ deployment "stg" {
     owner         = store.varset.common_tags.owner
     createdBy     = store.varset.common_tags.createdBy
     cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
     name_prefix   = store.varset.common_tags.name_prefix
   }
   
@@ -119,6 +121,7 @@ deployment "prd" {
     owner         = store.varset.common_tags.owner
     createdBy     = store.varset.common_tags.createdBy
     cost_center   = store.varset.common_tags.cost_center
+    managed_by    = store.varset.common_tags.managed_by
     name_prefix   = store.varset.common_tags.name_prefix
   }
   
