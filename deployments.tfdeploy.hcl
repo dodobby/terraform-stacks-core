@@ -61,6 +61,17 @@ deployment_group "production" {
 
 # 개발 환경 배포
 deployment "dev" {
+  # Variable Sets 값을 로컬 변수로 변환
+  locals {
+    aws_region   = store.varset.aws_credentials.aws_region
+    project_name = store.varset.common_tags.project_name
+    owner        = store.varset.common_tags.owner
+    createdBy    = store.varset.common_tags.createdBy
+    cost_center  = store.varset.common_tags.cost_center
+    managed_by   = store.varset.common_tags.managed_by
+    name_prefix  = store.varset.common_tags.name_prefix
+  }
+  
   inputs = {
     # 환경 구분
     environment = "dev"
@@ -69,14 +80,14 @@ deployment "dev" {
     vpc_cidr           = "70.0.0.0/16"
     availability_zones = ["ap-northeast-2a"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (로컬 변수로 전달 - ephemeral 아님)
+    aws_region    = local.aws_region
+    project_name  = local.project_name
+    owner         = local.owner
+    createdBy     = local.createdBy
+    cost_center   = local.cost_center
+    managed_by    = local.managed_by
+    name_prefix   = local.name_prefix
   }
   
   deployment_group = deployment_group.development
@@ -84,6 +95,17 @@ deployment "dev" {
 
 # 스테이징 환경 배포
 deployment "stg" {
+  # Variable Sets 값을 로컬 변수로 변환
+  locals {
+    aws_region   = store.varset.aws_credentials.aws_region
+    project_name = store.varset.common_tags.project_name
+    owner        = store.varset.common_tags.owner
+    createdBy    = store.varset.common_tags.createdBy
+    cost_center  = store.varset.common_tags.cost_center
+    managed_by   = store.varset.common_tags.managed_by
+    name_prefix  = store.varset.common_tags.name_prefix
+  }
+  
   inputs = {
     # 환경 구분
     environment = "stg"
@@ -92,14 +114,14 @@ deployment "stg" {
     vpc_cidr           = "70.1.0.0/16"
     availability_zones = ["ap-northeast-2a", "ap-northeast-2b"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (로컬 변수로 전달 - ephemeral 아님)
+    aws_region    = local.aws_region
+    project_name  = local.project_name
+    owner         = local.owner
+    createdBy     = local.createdBy
+    cost_center   = local.cost_center
+    managed_by    = local.managed_by
+    name_prefix   = local.name_prefix
   }
   
   deployment_group = deployment_group.staging
@@ -107,6 +129,17 @@ deployment "stg" {
 
 # 프로덕션 환경 배포
 deployment "prd" {
+  # Variable Sets 값을 로컬 변수로 변환
+  locals {
+    aws_region   = store.varset.aws_credentials.aws_region
+    project_name = store.varset.common_tags.project_name
+    owner        = store.varset.common_tags.owner
+    createdBy    = store.varset.common_tags.createdBy
+    cost_center  = store.varset.common_tags.cost_center
+    managed_by   = store.varset.common_tags.managed_by
+    name_prefix  = store.varset.common_tags.name_prefix
+  }
+  
   inputs = {
     # 환경 구분
     environment = "prd"
@@ -115,14 +148,14 @@ deployment "prd" {
     vpc_cidr           = "70.2.0.0/16"
     availability_zones = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
     
-    # 공통 설정 (Variable Sets에서 관리)
-    aws_region    = store.varset.aws_credentials.aws_region
-    project_name  = store.varset.common_tags.project_name
-    owner         = store.varset.common_tags.owner
-    createdBy     = store.varset.common_tags.createdBy
-    cost_center   = store.varset.common_tags.cost_center
-    managed_by    = store.varset.common_tags.managed_by
-    name_prefix   = store.varset.common_tags.name_prefix
+    # 공통 설정 (로컬 변수로 전달 - ephemeral 아님)
+    aws_region    = local.aws_region
+    project_name  = local.project_name
+    owner         = local.owner
+    createdBy     = local.createdBy
+    cost_center   = local.cost_center
+    managed_by    = local.managed_by
+    name_prefix   = local.name_prefix
   }
   
   deployment_group = deployment_group.production
