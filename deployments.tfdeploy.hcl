@@ -10,21 +10,7 @@ store "varset" "aws_credentials" {
   category = "env"
 }
 
-# -----------------------------------------------------------------------------
-# 공통 설정 - 중앙 관리
-# -----------------------------------------------------------------------------
-locals {
-  # 프로젝트 공통 설정
-  common_config = {
-    aws_region    = "ap-northeast-2"
-    project_name  = "terraform-stacks-demo"
-    owner         = "devops-team"
-    createdBy     = "hj.do"
-    cost_center   = "engineering"
-    managed_by    = "terraform-stacks"
-    name_prefix   = "hjdo"
-  }
-}
+
 
 # -----------------------------------------------------------------------------
 # 자동 승인 정책 정의
@@ -67,42 +53,69 @@ deployment_group "core_production" {
 
 # 개발 환경 배포
 deployment "dev" {
-  inputs = merge(local.common_config, {
-    # 환경별 설정
+  inputs = {
+    # 환경 구분
     environment = "dev"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-  })
+    
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
+  }
   
   deployment_group = deployment_group.core_development
 }
 
 # 스테이징 환경 배포
 deployment "stg" {
-  inputs = merge(local.common_config, {
-    # 환경별 설정
+  inputs = {
+    # 환경 구분
     environment = "stg"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-  })
+    
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
+  }
   
   deployment_group = deployment_group.core_staging
 }
 
 # 프로덕션 환경 배포
 deployment "prd" {
-  inputs = merge(local.common_config, {
-    # 환경별 설정
+  inputs = {
+    # 환경 구분
     environment = "prd"
     
     # AWS 자격증명 (Variable Sets에서 가져오기)
     aws_access_key_id     = store.varset.aws_credentials.AWS_ACCESS_KEY_ID
     aws_secret_access_key = store.varset.aws_credentials.AWS_SECRET_ACCESS_KEY
-  })
+    
+    # 공통 설정
+    aws_region    = "ap-northeast-2"
+    project_name  = "terraform-stacks-demo"
+    owner         = "devops-team"
+    createdBy     = "hj.do"
+    cost_center   = "engineering"
+    managed_by    = "terraform-stacks"
+    name_prefix   = "hjdo"
+  }
   
   deployment_group = deployment_group.core_production
 }
