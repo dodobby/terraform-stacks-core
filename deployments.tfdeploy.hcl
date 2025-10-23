@@ -24,16 +24,16 @@ store "varset" "network_config" {
 # 배포 그룹 정의 - 환경별 배포 순서 제어
 # -----------------------------------------------------------------------------
 deployment_group "development" {
-  deployments = ["dev"]
+  deployment "dev" {}
 }
 
 deployment_group "staging" {
-  deployments = ["stg"]
+  deployment "stg" {}
   depends_on = [deployment_group.development]
 }
 
 deployment_group "production" {
-  deployments = ["prd"]
+  deployment "prd" {}
   depends_on = [deployment_group.staging]
 }
 
@@ -105,11 +105,11 @@ deployment "prd" {
 # 자동 승인 정책
 # -----------------------------------------------------------------------------
 deployment_auto_approve "dev_auto_approve" {
-  deployment = "dev"
+  deployment = deployment.dev
   
-  condition {
-    max_changes = 10
-    reason = "Dev environment - auto approved for small changes"
+  check "max_changes" {
+    condition = plan.changes.total <= 10
+    reason    = "Dev environment - auto approved for small changes"
   }
 }
 
@@ -119,7 +119,7 @@ deployment_auto_approve "dev_auto_approve" {
 # 출력 값 게시 - 다른 스택에서 사용
 # -----------------------------------------------------------------------------
 publish_output "vpc_outputs" {
-  outputs = {
+  value = {
     vpc_id                    = output.vpc_id
     vpc_cidr_block           = output.vpc_cidr_block
     public_subnet_ids         = output.public_subnet_ids
