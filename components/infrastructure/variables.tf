@@ -17,12 +17,14 @@ variable "name_prefix" {
   description = "Prefix for resource names"
   type        = string
   default     = "hjdo"
+  ephemeral   = true
 }
 
 variable "aws_region" {
   description = "AWS region"
   type        = string
   default     = "ap-northeast-2"
+  ephemeral   = true
 }
 
 variable "enable_nat_gateway" {
@@ -35,4 +37,5 @@ variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
   default     = {}
+  ephemeral   = true
 }
