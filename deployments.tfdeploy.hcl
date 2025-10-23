@@ -133,6 +133,7 @@ publish_output "vpc_outputs" {
     db_security_group_id     = string
     ec2_instance_profile_arn = string
   })
+  value = deployment.dev.vpc_outputs
 }
 
 publish_output "stg_vpc_outputs" {
@@ -145,6 +146,7 @@ publish_output "stg_vpc_outputs" {
     db_security_group_id     = string
     ec2_instance_profile_arn = string
   })
+  value = deployment.stg.stg_vpc_outputs
 }
 
 publish_output "prd_vpc_outputs" {
@@ -157,6 +159,7 @@ publish_output "prd_vpc_outputs" {
     db_security_group_id     = string
     ec2_instance_profile_arn = string
   })
+  value = deployment.prd.prd_vpc_outputs
 }
 
 publish_output "yaml_config_test" {
@@ -168,4 +171,5 @@ publish_output "yaml_config_test" {
     availability_zones_from_yaml = list(string)
     enable_nat_gateway_from_yaml = bool
   })
+  value = deployment.dev.yaml_config_test
 }
