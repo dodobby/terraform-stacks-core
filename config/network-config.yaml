@@ -1,0 +1,19 @@
+# 네트워크 관련 설정만 YAML로 관리
+dev:
+  vpc_cidr: "10.0.0.0/16"
+  availability_zones:
+    - "ap-northeast-2a"
+  enable_nat_gateway: false  # 개발 환경에서는 비용 절약
+stg:
+  vpc_cidr: "10.1.0.0/16"
+  availability_zones:
+    - "ap-northeast-2a"
+    - "ap-northeast-2b"
+  enable_nat_gateway: true
+prd:
+  vpc_cidr: "10.2.0.0/16"
+  availability_zones:
+    - "ap-northeast-2a"
+    - "ap-northeast-2b"
+    - "ap-northeast-2c"
+  enable_nat_gateway: true
