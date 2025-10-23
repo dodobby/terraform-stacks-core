@@ -17,7 +17,9 @@ required_providers {
 # -----------------------------------------------------------------------------
 provider "aws" "default" {
   config {
-    region = var.aws_region
+    access_key = var.aws_access_key_id
+    secret_key = var.aws_secret_access_key
+    region     = var.aws_region
     default_tags {
       tags = {
         Environment = var.environment
@@ -85,6 +87,23 @@ variable "cost_center" {
 variable "managed_by" {
   type        = string
   description = "Managed by"
+}
+
+# -----------------------------------------------------------------------------
+# AWS 자격증명 변수 (ephemeral 사용)
+# -----------------------------------------------------------------------------
+variable "aws_access_key_id" {
+  type        = string
+  description = "AWS access key ID"
+  sensitive   = true
+  ephemeral   = true
+}
+
+variable "aws_secret_access_key" {
+  type        = string
+  description = "AWS secret access key"
+  sensitive   = true
+  ephemeral   = true
 }
 
 # -----------------------------------------------------------------------------
