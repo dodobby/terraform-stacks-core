@@ -21,20 +21,38 @@ store "varset" "network_config" {
 }
 
 # -----------------------------------------------------------------------------
+# 자동 승인 정책 정의
+# -----------------------------------------------------------------------------
+deployment_auto_approve "dev_auto_approve" {
+  check {
+    condition = context.plan.deployment == deployment.dev
+    reason    = "Automatically applying dev deployment for small changes."
+  }
+}
+
+deployment_auto_approve "small_changes" {
+  check {
+    condition = context.plan.changes.total <= 10
+    reason    = "Auto-approve changes with 10 or fewer resources."
+  }
+}
+
+# -----------------------------------------------------------------------------
 # 배포 그룹 정의 - 환경별 배포 순서 제어
 # -----------------------------------------------------------------------------
 deployment_group "development" {
-  deployment "dev" {}
+  auto_approve_checks = [
+    deployment_auto_approve.dev_auto_approve,
+    deployment_auto_approve.small_changes
+  ]
 }
 
 deployment_group "staging" {
-  deployment "stg" {}
-  depends_on = [deployment_group.development]
+  auto_approve_checks = []  # 수동 승인
 }
 
 deployment_group "production" {
-  deployment "prd" {}
-  depends_on = [deployment_group.staging]
+  auto_approve_checks = []  # 수동 승인
 }
 
 # -----------------------------------------------------------------------------
@@ -59,6 +77,8 @@ deployment "dev" {
     cost_center   = store.varset.common_tags.cost_center
     name_prefix   = store.varset.common_tags.name_prefix
   }
+  
+  deployment_group = deployment_group.development
 }
 
 # 스테이징 환경 배포
@@ -79,6 +99,8 @@ deployment "stg" {
     cost_center   = store.varset.common_tags.cost_center
     name_prefix   = store.varset.common_tags.name_prefix
   }
+  
+  deployment_group = deployment_group.staging
 }
 
 # 프로덕션 환경 배포
@@ -99,35 +121,54 @@ deployment "prd" {
     cost_center   = store.varset.common_tags.cost_center
     name_prefix   = store.varset.common_tags.name_prefix
   }
-}
-
-# -----------------------------------------------------------------------------
-# 자동 승인 정책
-# -----------------------------------------------------------------------------
-deployment_auto_approve "dev_auto_approve" {
-  deployment = deployment.dev
   
-  check "max_changes" {
-    condition = plan.changes.total <= 10
-    reason    = "Dev environment - auto approved for small changes"
-  }
+  deployment_group = deployment_group.production
 }
-
-# stg, prd 환경은 수동 승인 (기본값)
 
 # -----------------------------------------------------------------------------
 # 출력 값 게시 - 다른 스택에서 사용
 # -----------------------------------------------------------------------------
 publish_output "vpc_outputs" {
+  description = "VPC and network resources from core infrastructure"
   value = {
-    vpc_id                    = output.vpc_id
-    vpc_cidr_block           = output.vpc_cidr_block
-    public_subnet_ids         = output.public_subnet_ids
-    private_subnet_ids        = output.private_subnet_ids
-    web_security_group_id     = output.web_security_group_id
-    db_security_group_id      = output.db_security_group_id
-    app_security_group_id     = output.app_security_group_id
-    ec2_instance_profile_arn  = output.ec2_instance_profile_arn
-    ec2_role_arn             = output.ec2_role_arn
+    vpc_id                    = deployment.dev.vpc_id
+    vpc_cidr_block           = deployment.dev.vpc_cidr_block
+    public_subnet_ids         = deployment.dev.public_subnet_ids
+    private_subnet_ids        = deployment.dev.private_subnet_ids
+    web_security_group_id     = deployment.dev.web_security_group_id
+    db_security_group_id      = deployment.dev.db_security_group_id
+    app_security_group_id     = deployment.dev.app_security_group_id
+    ec2_instance_profile_arn  = deployment.dev.ec2_instance_profile_arn
+    ec2_role_arn             = deployment.dev.ec2_role_arn
+  }
+}
+
+publish_output "stg_vpc_outputs" {
+  description = "VPC and network resources from staging environment"
+  value = {
+    vpc_id                    = deployment.stg.vpc_id
+    vpc_cidr_block           = deployment.stg.vpc_cidr_block
+    public_subnet_ids         = deployment.stg.public_subnet_ids
+    private_subnet_ids        = deployment.stg.private_subnet_ids
+    web_security_group_id     = deployment.stg.web_security_group_id
+    db_security_group_id      = deployment.stg.db_security_group_id
+    app_security_group_id     = deployment.stg.app_security_group_id
+    ec2_instance_profile_arn  = deployment.stg.ec2_instance_profile_arn
+    ec2_role_arn             = deployment.stg.ec2_role_arn
+  }
+}
+
+publish_output "prd_vpc_outputs" {
+  description = "VPC and network resources from production environment"
+  value = {
+    vpc_id                    = deployment.prd.vpc_id
+    vpc_cidr_block           = deployment.prd.vpc_cidr_block
+    public_subnet_ids         = deployment.prd.public_subnet_ids
+    private_subnet_ids        = deployment.prd.private_subnet_ids
+    web_security_group_id     = deployment.prd.web_security_group_id
+    db_security_group_id      = deployment.prd.db_security_group_id
+    app_security_group_id     = deployment.prd.app_security_group_id
+    ec2_instance_profile_arn  = deployment.prd.ec2_instance_profile_arn
+    ec2_role_arn             = deployment.prd.ec2_role_arn
   }
 }
