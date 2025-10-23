@@ -15,8 +15,17 @@ required_providers {
 # -----------------------------------------------------------------------------
 # Provider 설정
 # -----------------------------------------------------------------------------
-provider "aws" "main" {
-  region = var.aws_region
+provider "aws" "default" {
+  config {
+    region = var.aws_region
+    default_tags {
+      tags = {
+        Environment = var.environment
+        ManagedBy   = "terraform-stacks"
+        Stack       = "core-infrastructure"
+      }
+    }
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -127,7 +136,7 @@ component "infrastructure" {
   source = "./components/infrastructure"
   
   providers = {
-    aws = provider.aws.main
+    aws = provider.aws.default
   }
   
   inputs = {
