@@ -53,7 +53,7 @@ deployment_group "core_production" {
 
 # 개발 환경 배포
 deployment "dev" {
-  destroy = true  # 리소스 삭제
+  # destroy = true  # 리소스 삭제
   
   inputs = {
     # 환경 구분
@@ -78,7 +78,7 @@ deployment "dev" {
 
 # 스테이징 환경 배포
 deployment "stg" {
-  destroy = true  # 리소스 삭제
+  # destroy = true  # 리소스 삭제
   
   inputs = {
     # 환경 구분
@@ -103,7 +103,7 @@ deployment "stg" {
 
 # 프로덕션 환경 배포
 deployment "prd" {
-  destroy = true  # 리소스 삭제
+  # destroy = true  # 리소스 삭제
   
   inputs = {
     # 환경 구분
